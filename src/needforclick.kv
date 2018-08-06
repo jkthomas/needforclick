@@ -1,5 +1,8 @@
 #:import utils kivy.utils
 
+<NumberButton@Button>:
+    on_press: self.disabled = True
+
 <SettingsLayout@BoxLayout>:
     canvas.before:
         Color:
@@ -7,24 +10,30 @@
         Rectangle:
             pos: self.pos
             size: self.size
-    orientation: "vertical"
+    orientation: "horizontal"
     size_hint_y: 0.1
-    Button:
-        text: "Reset"
-    Button:
-        text: "Options"
+
+<Break@BoxLayout>:
+    canvas.before:
+        Color:
+            rgb: utils.get_color_from_hex('#660066')
+        Rectangle:
+            pos: self.pos
+            size: self.size
+    size_hint_y: 0.1
 
 <GameBoardLayout@GridLayout>:
-    size_hint_y: 0.9
     canvas.before:
         Color:
             rgb: utils.get_color_from_hex('#000000')
         Rectangle:
             pos: self.pos
             size: self.size
+    orientation: "vertical"
+    size_hint_y: 0.8
     cols: 3
 
 <ScreenLayout@BoxLayout>:
-    orientation: "horizontal"
+    orientation: "vertical"
 
 <MainScreen@Screen>:
