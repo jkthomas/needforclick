@@ -1,0 +1,30 @@
+#:import utils kivy.utils
+
+<SettingsLayout@BoxLayout>:
+    canvas.before:
+        Color:
+            rgb: utils.get_color_from_hex('#660066')
+        Rectangle:
+            pos: self.pos
+            size: self.size
+    orientation: "vertical"
+    size_hint_y: 0.1
+    Button:
+        text: "Reset"
+    Button:
+        text: "Options"
+
+<GameBoardLayout@GridLayout>:
+    size_hint_y: 0.9
+    canvas.before:
+        Color:
+            rgb: utils.get_color_from_hex('#000000')
+        Rectangle:
+            pos: self.pos
+            size: self.size
+    cols: 3
+
+<ScreenLayout@BoxLayout>:
+    orientation: "horizontal"
+
+<MainScreen@Screen>:
