@@ -2,7 +2,14 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.gridlayout import GridLayout
 from kivy.properties import ObjectProperty
 from kivy.uix.button import Button
+from kivy.uix.label import Label
 import random
+
+
+class TimeLabel(Label):
+    def __init__(self, text):
+        super(TimeLabel, self).__init__()
+        self.text = str(text)
 
 
 class NumberButton(Button):
@@ -13,15 +20,23 @@ class NumberButton(Button):
 
 
 class Break(BoxLayout):
+    time_label = TimeLabel("Time: 0.0 s")
+
     def __init__(self):
         super(Break, self).__init__()
+        self.add_widget(self.time_label)
 
 
 class SettingsLayout(BoxLayout):
     def __init__(self):
         super(SettingsLayout, self).__init__()
-        self.add_widget(Button(text="Reset"))
+        refresh_button = Button(text="Reset")
+        refresh_button.bind(on_release=self.restart_game)
+        self.add_widget(refresh_button)
         self.add_widget(Button(text="Options"))
+
+    def restart_game(self, instance):
+        self.parent.restart_game()
 
 
 class GameBoardLayout(GridLayout):
@@ -49,11 +64,14 @@ class GameBoardLayout(GridLayout):
 
     def button_hit(self, instance):
         instance.disabled = True
-        if (int(instance.id) + 1) == self.numbers.__len__():
-            for button in self.children:
-                button.disabled = False
+        if int(instance.text) == self.numbers.__len__():
+            self.parent.game_ended()
         else:
             self.numbers[int(instance.id) + 1].bind(on_press=self.button_hit)
+
+    def refresh_buttons(self):
+        for button in self.children:
+            button.disabled = False
 
 
 class ScreenLayout(BoxLayout):
@@ -69,3 +87,9 @@ class ScreenLayout(BoxLayout):
         self.add_widget(self.settings_layout)
         self.add_widget(self.break_point)
         self.add_widget(self.game_board_layout)
+
+    def restart_game(self):
+        self.game_board_layout.refresh_buttons()
+
+    def game_ended(self):
+        self.break_point.time_label.text = "Time: Some seconds"
