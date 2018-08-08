@@ -6,8 +6,9 @@ import random
 
 
 class NumberButton(Button):
-    def __init__(self, text):
+    def __init__(self, id, text):
         super(NumberButton, self).__init__()
+        self.id = str(id)
         self.text = str(text)
 
 
@@ -28,21 +29,31 @@ class GameBoardLayout(GridLayout):
 
     def __init__(self, grid_size):
         super(GameBoardLayout, self).__init__()
-        self.numbers = self.initialize_numbers_array(grid_size)
+        self.initialize_numbers_array(grid_size)
         self.initialize_game_board()
 
     def initialize_numbers_array(self, grid_size):
-        temp_numbers = list(range(1, grid_size * grid_size + 1))
-        random.shuffle(temp_numbers)
-        return temp_numbers
+        for i in range(0, grid_size * grid_size):
+            number_button = NumberButton(
+                id=i,
+                text=(i+1)
+            )
+            self.numbers.append(number_button)
+
+        self.numbers[0].bind(on_press=self.button_hit)
 
     def initialize_game_board(self):
-        for number in self.numbers:
-            self.add_widget(
-                NumberButton(
-                    text=number
-                )
-            )
+        shuffled_buttons = random.sample(self.numbers, self.numbers.__len__())
+        for button in shuffled_buttons:
+            self.add_widget(button)
+
+    def button_hit(self, instance):
+        instance.disabled = True
+        if (int(instance.id) + 1) == self.numbers.__len__():
+            for button in self.children:
+                button.disabled = False
+        else:
+            self.numbers[int(instance.id) + 1].bind(on_press=self.button_hit)
 
 
 class ScreenLayout(BoxLayout):
