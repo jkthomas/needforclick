@@ -34,7 +34,7 @@ class SettingsLayout(BoxLayout):
         refresh_button = Button(text="Reset")
         refresh_button.bind(on_release=self.restart_game)
         self.add_widget(refresh_button)
-        options_button = Button(text="Options")
+        options_button = Button(text="Increment Grid Size")
         options_button.bind(on_release=self.change_grid_size)
         self.add_widget(options_button)
 
@@ -42,10 +42,7 @@ class SettingsLayout(BoxLayout):
         self.parent.restart_game()
 
     def change_grid_size(self, instance):
-        self.parent.change_grid_size(4)
-        # 4 - to change, inject value
-        # Manage buttons actions
-        # Clean dependencies
+        self.parent.change_grid_size()
 
 
 class GameBoardLayout(GridLayout):
@@ -91,9 +88,12 @@ class GameBoardLayout(GridLayout):
         self.initialize_numbers_array()
         self.initialize_game_board()
 
-    def change_grid_size(self, grid_size):
-        self.cols = grid_size
-        self.grid_size = grid_size
+    def change_grid_size(self):
+        if self.grid_size == 5:
+            self.grid_size = 2
+        else:
+            self.grid_size += 1
+        self.cols = self.grid_size
         self.game_ended()
 
 
@@ -114,5 +114,5 @@ class ScreenLayout(BoxLayout):
     def restart_game(self):
         self.game_board_layout.refresh_buttons()
 
-    def change_grid_size(self, grid_size):
-        self.game_board_layout.change_grid_size(grid_size)
+    def change_grid_size(self):
+        self.game_board_layout.change_grid_size()
