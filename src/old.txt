@@ -4,7 +4,6 @@ from kivy.properties import ObjectProperty
 from kivy.uix.button import Button
 from kivy.uix.label import Label
 import random
-import gc
 
 
 class TimeLabel(Label):
@@ -34,32 +33,22 @@ class SettingsLayout(BoxLayout):
         refresh_button = Button(text="Reset")
         refresh_button.bind(on_release=self.restart_game)
         self.add_widget(refresh_button)
-        options_button = Button(text="Options")
-        options_button.bind(on_release=self.change_grid_size)
-        self.add_widget(options_button)
+        self.add_widget(Button(text="Options"))
 
     def restart_game(self, instance):
         self.parent.restart_game()
 
-    def change_grid_size(self, instance):
-        self.parent.change_grid_size(4)
-        # 4 - to change, inject value
-        # Manage buttons actions
-        # Clean dependencies
-
 
 class GameBoardLayout(GridLayout):
-    grid_size = 3
     numbers = []
 
     def __init__(self, grid_size):
         super(GameBoardLayout, self).__init__()
-        self.grid_size = grid_size
-        self.initialize_numbers_array()
+        self.initialize_numbers_array(grid_size)
         self.initialize_game_board()
 
-    def initialize_numbers_array(self):
-        for i in range(0, self.grid_size * self.grid_size):
+    def initialize_numbers_array(self, grid_size):
+        for i in range(0, grid_size * grid_size):
             number_button = NumberButton(
                 id=i,
                 text=(i+1)
@@ -75,26 +64,18 @@ class GameBoardLayout(GridLayout):
 
     def button_hit(self, instance):
         instance.disabled = True
-        if int(instance.text) == self.numbers.__len__():
-            self.game_ended()
+        # if int(instance.text) == self.numbers.__len__():
+            # self.parent.game_ended()
+        # else:
+           #  self.numbers[int(instance.id) + 1].bind(on_press=self.button_hit)
+        if int(instance.text) == self.children.__len__():
+            self.parent.game_ended()
         else:
-            self.numbers[int(instance.id) + 1].bind(on_press=self.button_hit)
+            self.children[int(instance.id) + 1].bind(on_press=self.button_hit)
 
     def refresh_buttons(self):
         for button in self.children:
             button.disabled = False
-
-    def game_ended(self):
-        self.numbers = []
-        self.clear_widgets()
-        gc.collect()
-        self.initialize_numbers_array()
-        self.initialize_game_board()
-
-    def change_grid_size(self, grid_size):
-        self.cols = grid_size
-        self.grid_size = grid_size
-        self.game_ended()
 
 
 class ScreenLayout(BoxLayout):
@@ -114,5 +95,5 @@ class ScreenLayout(BoxLayout):
     def restart_game(self):
         self.game_board_layout.refresh_buttons()
 
-    def change_grid_size(self, grid_size):
-        self.game_board_layout.change_grid_size(grid_size)
+    def game_ended(self):
+        self.break_point.time_label.text = "Time: Some seconds"
